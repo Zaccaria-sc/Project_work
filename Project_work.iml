@@ -11,5 +11,20 @@
     <orderEntry type="library" name="mysql.connector.java" level="project" />
     <orderEntry type="library" name="google.code.gson" level="project" />
     <orderEntry type="library" name="telegram.telegrambots" level="project" />
+    <orderEntry type="library" name="seleniumhq.selenium.api" level="application" />
+    <orderEntry type="library" name="seleniumhq.selenium.chrome.driver" level="project" />
+    <orderEntry type="module-library">
+      <library>
+        <CLASSES>
+          <root url="file://$USER_HOME$/Downloads/selenium-java-4.27.0" />
+        </CLASSES>
+        <JAVADOC />
+        <SOURCES>
+          <root url="file://$USER_HOME$/Downloads/selenium-java-4.27.0" />
+        </SOURCES>
+        <jarDirectory url="file://$USER_HOME$/Downloads/selenium-java-4.27.0" recursive="false" />
+        <jarDirectory url="file://$USER_HOME$/Downloads/selenium-java-4.27.0" recursive="false" type="SOURCES" />
+      </library>
+    </orderEntry>
   </component>
 </module>
