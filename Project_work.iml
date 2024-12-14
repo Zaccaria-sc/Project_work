@@ -26,5 +26,6 @@
         <jarDirectory url="file://$USER_HOME$/Downloads/selenium-java-4.27.0" recursive="false" type="SOURCES" />
       </library>
     </orderEntry>
+    <orderEntry type="library" name="google.cloud.trace.guice.java.timestamp" level="project" />
   </component>
 </module>

@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="google.cloud.trace.guice.java.timestamp" type="repository">
+    <properties maven-id="com.google.cloud.trace:guice-java-timestamp:0.7.0" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/guice-java-timestamp-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/core-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guava-19.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/java-timestamp-0.7.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/guice-4.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/javax.inject-1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/aopalliance-1.0.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

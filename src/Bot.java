@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Bot extends TelegramLongPollingBot {
+    Database database = new Database("localhost", "3306", "project_work", "root", "");
 
     @Override
     public void onUpdateReceived(Update update) {
@@ -24,7 +25,13 @@ public class Bot extends TelegramLongPollingBot {
             } else if (messageText.equals("/info")) {
                 SendMessage response = new SendMessage();
                 response.setChatId(chatId); // Aggiungi l'ID della chat per inviare il messaggio nella giusta conversazione
-                response.setText("Ciao! Sono *integratoriProBot*, il tuo assistente personale per trovare le migliori offerte di integratori online. Utilizzo un web scraper per raccogliere i dati sui prodotti dai siti www.prozis.com e Zec+ Nutrition Italia e li memorizzo in un database. Quando mi chiederai di mostrarti un integratore, ti presenterò le offerte disponibili, permettendoti di scegliere quella che più ti interessa. Se trovi un'offerta che ti piace, puoi aggiungerla al tuo database personale delle offerte per tenerla sempre a portata di mano!");
+                response.setText("Ciao! Sono integratoriProBot, il tuo assistente personale per trovare le migliori offerte di integratori online. Utilizzo un web scraper avanzato per raccogliere in tempo reale i dati sui prodotti dai siti www.prozis.com e Bulk, leader nel settore degli integratori. Con me al tuo fianco, scoprire le migliori promozioni non è mai stato così facile e veloce!\n" +
+                        "\n" +
+                        "Il mio compito è aiutarti a navigare tra un mare di offerte, presentandoti solo quelle più vantaggiose e adatte alle tue esigenze. Quando mi chiederai di mostrarti un integratore, ti fornirò una lista dettagliata delle offerte disponibili, completa di prezzi, descrizioni e link diretti. Potrai confrontare le opzioni con semplicità e scegliere quella che fa davvero al caso tuo.\n" +
+                        "\n" +
+                        "Ma non finisce qui! Se trovi un'offerta che ti entusiasma, potrai aggiungerla al tuo database personale delle offerte. In questo modo, avrai sempre a portata di mano le migliori occasioni, pronte per essere consultate ogni volta che vorrai.\n" +
+                        "\n" +
+                        "Con integratoriProBot, risparmiare tempo e denaro mentre migliori il tuo benessere non è mai stato così semplice e piacevole. Pronto a iniziare la tua ricerca per le offerte perfette? Io sono qui per aiutarti!\n");
                 response.setParseMode("Markdown"); // Imposta il parse mode a Markdown per la formattazione del testo
                 try {
                     execute(response);
@@ -47,24 +54,79 @@ public class Bot extends TelegramLongPollingBot {
             String callbackData = update.getCallbackQuery().getData();
             long chatId = update.getCallbackQuery().getMessage().getChatId();
 
-            SendMessage response = new SendMessage();
-            response.setChatId(chatId);
-            if(callbackData.equals("proteine_offerte")) {
-                response.setText("Proteine");
+            String categoria = null;
+
+            // Identifica la categoria scelta
+            switch (callbackData) {
+                case "proteine_offerte":
+                    categoria = "Proteine";
+                    break;
+                case "creatina_offerte":
+                    categoria = "Creatina";
+                    break;
+                case "amminoacidi_offerte":
+                    categoria = "Amminoacidi";
+                    break;
+                case "pre_workout_offerte":
+                    categoria = "Preworkout";
+                    break;
+                default:
+                    System.out.println("Callback sconosciuto: " + callbackData);
             }
-            else if(callbackData.equals("creatina_offerte")) {
-                response.setText("Creatina");
-            }
-            else if(callbackData.equals("amminoacidi_offerte")) {
-                response.setText("Amminoacidi");
-            }
-            else if(callbackData.equals("pre_workout_offerte")){
-                response.setText("Pre-Workout");
-            }
-            try {
-                execute(response);
-            } catch (TelegramApiException e) {
-                e.printStackTrace();
+
+            if (categoria != null) {
+                // Recupera le offerte dal database
+                List<String> offerte = database.getOfferteByCategoria(categoria);
+
+                if (!offerte.isEmpty()) {
+                    // Suddividi le offerte in blocchi di testo massimo 4000 caratteri
+                    StringBuilder risposta = new StringBuilder("Ecco le migliori offerte per " + categoria + ":\n\n");
+                    int charCount = risposta.length();
+
+                    for (String offerta : offerte) {
+                        if (charCount + offerta.length() > 4000) {
+                            // Invia il blocco corrente
+                            SendMessage response = new SendMessage();
+                            response.setChatId(chatId);
+                            response.setText(risposta.toString());
+                            try {
+                                execute(response);
+                            } catch (TelegramApiException e) {
+                                e.printStackTrace();
+                            }
+
+                            // Resetta il buffer
+                            risposta.setLength(0);
+                            risposta.append("Ecco le migliori offerte per ").append(categoria).append(":\n\n");
+                            charCount = risposta.length();
+                        }
+
+                        risposta.append(offerta).append("\n\n");
+                        charCount += offerta.length();
+                    }
+
+                    // Invia il blocco rimanente
+                    if (risposta.length() > 0) {
+                        SendMessage response = new SendMessage();
+                        response.setChatId(chatId);
+                        response.setText(risposta.toString());
+                        try {
+                            execute(response);
+                        } catch (TelegramApiException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                } else {
+                    // Nessuna offerta disponibile
+                    SendMessage response = new SendMessage();
+                    response.setChatId(chatId);
+                    response.setText("Non ci sono offerte disponibili per " + categoria + ".");
+                    try {
+                        execute(response);
+                    } catch (TelegramApiException e) {
+                        e.printStackTrace();
+                    }
+                }
             }
         }
     }
@@ -119,6 +181,6 @@ public class Bot extends TelegramLongPollingBot {
 
     @Override
     public String getBotToken() {
-        return "7474599356:AAGmz1j9lLmCBmxpJOSYUT_KnPvMVTkSPlA"; // Sostituisci con il token reale
+        return System.getenv("token");
     }
 }
